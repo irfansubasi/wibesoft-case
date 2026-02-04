@@ -13,9 +13,14 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  private excludePasswordHash(user: User): Omit<User, 'passwordHash'> {
+    const { passwordHash, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  }
+
   async register(
     registerDto: RegisterDto,
-  ): Promise<{ accessToken: string; user: User }> {
+  ): Promise<{ accessToken: string; user: Omit<User, 'passwordHash'> }> {
     const user = await this.usersService.create(
       registerDto.email,
       registerDto.password,
@@ -27,13 +32,13 @@ export class AuthService {
 
     return {
       accessToken,
-      user,
+      user: this.excludePasswordHash(user),
     };
   }
 
   async login(
     loginDto: LoginDto,
-  ): Promise<{ accessToken: string; user: User }> {
+  ): Promise<{ accessToken: string; user: Omit<User, 'passwordHash'> }> {
     const user = await this.usersService.findByEmail(loginDto.email);
 
     if (!user) {
@@ -54,7 +59,7 @@ export class AuthService {
 
     return {
       accessToken,
-      user,
+      user: this.excludePasswordHash(user),
     };
   }
 }
