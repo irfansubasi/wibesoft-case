@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { Product } from './product.entity';
+import { OrderItem } from 'src/orders/order-item.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
@@ -28,14 +29,24 @@ describe('ProductsService', () => {
     remove: jest.fn(),
   };
 
+  const mockOrderItemRepository = {
+    find: jest.fn().mockResolvedValue([]),
+    save: jest.fn(),
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
+    mockOrderItemRepository.find.mockResolvedValue([]);
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProductsService,
         {
           provide: getRepositoryToken(Product),
           useValue: mockRepository,
+        },
+        {
+          provide: getRepositoryToken(OrderItem),
+          useValue: mockOrderItemRepository,
         },
       ],
     }).compile();
@@ -144,11 +155,16 @@ describe('ProductsService', () => {
   describe('remove', () => {
     it('should remove product', async () => {
       mockRepository.findOne.mockResolvedValue(mockProduct);
+      mockOrderItemRepository.find.mockResolvedValue([]);
       mockRepository.remove.mockResolvedValue(mockProduct);
 
       await service.remove(1);
 
       expect(mockRepository.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(mockOrderItemRepository.find).toHaveBeenCalledWith({
+        where: { productId: 1 },
+        relations: ['order'],
+      });
       expect(mockRepository.remove).toHaveBeenCalledWith(mockProduct);
     });
 

@@ -14,6 +14,7 @@ const mockUser: User = {
   email: 'test@example.com',
   passwordHash: '$2b$10$hashed',
   name: 'Test User',
+  role: 'USER',
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -50,6 +51,7 @@ describe('UsersService', () => {
         email: 'test@example.com',
         passwordHash: '$2b$10$hashed',
         name: 'Test User',
+        role: 'USER',
       });
       mockRepository.save.mockResolvedValue(mockUser);
 
@@ -67,6 +69,7 @@ describe('UsersService', () => {
         email: 'test@example.com',
         passwordHash: '$2b$10$hashed',
         name: 'Test User',
+        role: 'USER',
       });
       expect(mockRepository.save).toHaveBeenCalled();
       expect(result).toEqual(mockUser);
