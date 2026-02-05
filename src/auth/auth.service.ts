@@ -27,7 +27,7 @@ export class AuthService {
       registerDto.name,
     );
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, role: user.role };
     const accessToken = this.jwtService.sign(payload);
 
     return {
@@ -54,7 +54,7 @@ export class AuthService {
       throw new UnauthorizedException('Email or password is incorrect.');
     }
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, role: user.role };
     const accessToken = this.jwtService.sign(payload);
 
     return {

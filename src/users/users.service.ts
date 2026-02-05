@@ -31,6 +31,7 @@ export class UsersService {
       email,
       passwordHash,
       name,
+      role: 'USER',
     });
 
     return await this.userRepository.save(user);

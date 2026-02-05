@@ -1,15 +1,22 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { OrderItem } from 'src/orders/order-item.entity';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    @InjectRepository(OrderItem)
+    private readonly orderItemRepository: Repository<OrderItem>,
   ) {}
 
   async findAll(): Promise<Product[]> {
@@ -44,6 +51,27 @@ export class ProductsService {
 
   async remove(id: number): Promise<void> {
     const product = await this.findOne(id);
+
+    const orderItems = await this.orderItemRepository.find({
+      where: { productId: id },
+      relations: ['order'],
+    });
+
+    if (orderItems.length > 0) {
+      const hasPending = orderItems.some(
+        (item) => item.order?.status === 'PENDING',
+      );
+      if (hasPending) {
+        throw new BadRequestException(
+          'This product is in pending orders and cannot be deleted.',
+        );
+      }
+      for (const item of orderItems) {
+        item.productId = null;
+        await this.orderItemRepository.save(item);
+      }
+    }
+
     await this.productRepository.remove(product);
   }
 }
