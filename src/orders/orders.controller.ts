@@ -1,8 +1,10 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -17,6 +19,7 @@ import { OrdersService } from './orders.service';
 import { OrderResponseDto } from './dto/order-response.dto';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { User } from 'src/users/user.entity';
+import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 
 @ApiTags('Orders')
 @Controller('orders')
@@ -80,6 +83,37 @@ export class OrdersController {
     @Param('id', ParseIntPipe) id: number,
   ): Promise<OrderResponseDto> {
     const order = await this.ordersService.findOneForUser(user.id, id);
+    return {
+      id: order.id,
+      totalAmount: Number(order.totalAmount),
+      status: order.status,
+      createdAt: order.createdAt,
+      items: order.items.map((item) => ({
+        id: item.id,
+        productId: item.productId,
+        productName: item.product?.name ?? '',
+        quantity: item.quantity,
+        unitPrice: Number(item.unitPrice),
+        lineTotal: Number(item.lineTotal),
+      })),
+    };
+  }
+
+  @Patch(':id/status')
+  @ApiOperation({ summary: 'Update order status' })
+  @ApiResponse({ status: 200, type: OrderResponseDto })
+  @ApiResponse({ status: 404, description: 'Order not found' })
+  async updateStatus(
+    @CurrentUser() user: User,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateOrderStatusDto,
+  ): Promise<OrderResponseDto> {
+    const order = await this.ordersService.updateStatusForUser(
+      user.id,
+      id,
+      dto.status,
+    );
+
     return {
       id: order.id,
       totalAmount: Number(order.totalAmount),

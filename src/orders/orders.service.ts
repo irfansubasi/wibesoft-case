@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Order } from './order.entity';
+import { Order, OrderStatus } from './order.entity';
 import { OrderItem } from './order-item.entity';
 import { Cart } from 'src/cart/cart.entity';
 import { CartItem } from 'src/cart/cart-item.entity';
@@ -103,6 +103,26 @@ export class OrdersService {
     if (!order) {
       throw new NotFoundException('Order not found');
     }
+    return order;
+  }
+
+  async updateStatusForUser(
+    userId: number,
+    orderId: number,
+    status: OrderStatus,
+  ): Promise<Order> {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId, userId },
+      relations: ['items', 'items.product'],
+    });
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    order.status = status;
+    await this.orderRepository.save(order);
+
     return order;
   }
 }
