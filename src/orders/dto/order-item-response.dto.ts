@@ -4,8 +4,8 @@ export class OrderItemResponseDto {
   @ApiProperty()
   id: number;
 
-  @ApiProperty()
-  productId: number;
+  @ApiProperty({ nullable: true })
+  productId: number | null;
 
   @ApiProperty()
   productName: string;

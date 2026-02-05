@@ -20,8 +20,8 @@ export class OrderItem {
   @JoinColumn({ name: 'order_id' })
   order: Order;
 
-  @Column({ name: 'product_id' })
-  productId: number;
+  @Column({ name: 'product_id', nullable: true })
+  productId: number | null;
 
   @ManyToOne(() => Product)
   @JoinColumn({ name: 'product_id' })
