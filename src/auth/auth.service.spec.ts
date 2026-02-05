@@ -17,6 +17,7 @@ const mockUser: User = {
   email: 'test@example.com',
   passwordHash: '$2b$10$hashed',
   name: 'Test User',
+  role: 'USER',
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -66,6 +67,7 @@ describe('AuthService', () => {
       expect(mockJwtService.sign).toHaveBeenCalledWith({
         sub: mockUser.id,
         email: mockUser.email,
+        role: mockUser.role,
       });
       expect(result.accessToken).toBe('mock-jwt-token');
       expect(result.user).not.toHaveProperty('passwordHash');
@@ -110,6 +112,7 @@ describe('AuthService', () => {
       expect(mockJwtService.sign).toHaveBeenCalledWith({
         sub: mockUser.id,
         email: mockUser.email,
+        role: mockUser.role,
       });
       expect(result.accessToken).toBe('mock-jwt-token');
       expect(result.user).not.toHaveProperty('passwordHash');
