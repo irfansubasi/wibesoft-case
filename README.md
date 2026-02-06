@@ -1,98 +1,173 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# E-Commerce API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+NestJS ile geliştirilmiş, JWT tabanlı kimlik doğrulama ve rol yönetimi içeren basit bir e-ticaret backend API’sidir.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## İçindekiler
 
-## Description
+- [Projenin Çalıştırılması](#projenin-çalıştırılması)
+  - [Gereksinimler](#gereksinimler)
+  - [Yerel ortam](#yerel-ortam)
+  - [Docker ile](#docker-ile)
+  - [Testler](#testler)
+- [Kullanılan Teknolojiler](#kullanılan-teknolojiler)
+- [Ortam Değişkenleri](#ortam-değişkenleri)
+- [Varsayımlar](#varsayımlar)
+- [Zorunlu Özellikler (Case Gereksinimleri)](#zorunlu-özellikler-case-gereksinimleri)
+- [Bonus Özellikler](#bonus-özellikler)
+- [Bonus Dışında Eklenen Ekstralar](#bonus-dışında-eklenen-ekstralar)
+- [API Endpoint'leri](#api-endpointleri)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## Projenin Çalıştırılması
+
+### Gereksinimler
+
+- Node.js 20+
+- PostgreSQL 16+ (yerel kurulum veya Docker)
+- npm
+
+### Yerel ortam
+
+1. Bağımlılıkları yükleyin:
+
+   ```bash
+   npm install
+   ```
+
+2. `.env` dosyası oluşturun (`.env.example` dosyasını kopyalayıp gerekli değerleri doldurun):
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. PostgreSQL’in çalıştığından ve `.env` içindeki `DATABASE_*` bilgilerinin doğru olduğundan emin olun.
+
+4. Uygulamayı başlatın:
+
+   ```bash
+   npm run start:dev
+   ```
+
+   API: `http://localhost:3000`  
+   Swagger dokümantasyonu: `http://localhost:3000/api-docs`
+
+### Docker ile
+
+1. Proje kökünde `.env` dosyası olmalı (`.env.example`’dan kopyalayabilirsiniz).  
+   **Not:** Docker ile çalıştırırken `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_NAME` değerleri `docker-compose.yml` içindeki Postgres ayarlarıyla aynı olmalıdır (varsayılan: postgres / postgres / ecommerce). `DATABASE_HOST` ve `PORT` compose tarafından otomatik override edilir.
+
+2. Build ve çalıştırma:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+   API: `http://localhost:3000`  
+   Swagger: `http://localhost:3000/api-docs`
+
+### Testler
 
 ```bash
-$ npm install
+npm run test          # unit testler
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## Kullanılan Teknolojiler
 
-# watch mode
-$ npm run start:dev
+| Alan               | Teknoloji                                                                         |
+| ------------------ | --------------------------------------------------------------------------------- |
+| Çatı               | NestJS 11 (TypeScript)                                                            |
+| Veritabanı         | PostgreSQL 16, TypeORM                                                            |
+| Kimlik doğrulama   | JWT (Passport), bcrypt                                                            |
+| API dokümantasyonu | Swagger (OpenAPI)                                                                 |
+| Doğrulama          | class-validator, class-transformer                                                |
+| Konfigürasyon      | @nestjs/config (.env)                                                             |
+| Güvenlik / limit   | Helmet, @nestjs/throttler                                                         |
+| Diğer              | CORS (env’den), global ValidationPipe, özel exception filter, logging interceptor |
 
-# production mode
-$ npm run start:prod
-```
+---
 
-## Run tests
+## Ortam Değişkenleri
 
-```bash
-# unit tests
-$ npm run test
+`.env.example` dosyasındaki anahtarlar:
 
-# e2e tests
-$ npm run test:e2e
+- **PORT** – Uygulama portu (varsayılan 3000).
+- **DATABASE_HOST / DATABASE_PORT / DATABASE_USER / DATABASE_PASSWORD / DATABASE_NAME** – PostgreSQL bağlantı bilgileri. Docker’da `DATABASE_HOST` compose ile `postgres` yapılır; diğerleri postgres container ayarlarıyla uyumlu olmalı.
+- **JWT_SECRET / JWT_EXPIRES_IN** – JWT imza ve süre.
+- **ADMIN_EMAIL / ADMIN_PASSWORD / ADMIN_NAME** – İlk açılışta oluşturulacak admin kullanıcı (zorunlu).
+- **CORS_ORIGIN** – İzin verilen origin’ler (virgülle ayrılmış); boş bırakılırsa tüm origin’lere izin verilir.
 
-# test coverage
-$ npm run test:cov
-```
+---
 
-## Deployment
+## Varsayımlar
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+- Kullanıcı rolleri: `USER` ve `ADMIN`. Ürün CRUD sadece ADMIN’e açıktır; sepete ekleme, sipariş oluşturma ve kendi siparişlerini görme/güncelleme kullanıcıya aittir.
+- Sipariş oluşturulunca sepet temizlenir; stok sipariş anında düşülür.
+- Sipariş durumu kullanıcı tarafından güncellenebilir (örn. iptal için `CANCELLED`). Geçerli durumlar: `PENDING`, `COMPLETED`, `CANCELLED`.
+- Admin kullanıcı uygulama ilk ayağa kalkarken `.env`’deki `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME` ile seed edilir; bu alanlar zorunludur.
+- Ürün listesi ve detay herkese açıktır; ürün ekleme/güncelleme/silme sadece ADMIN içindir.
+- TypeORM **synchronize: true** kullanılmaktadır: şema entity’lere göre uygulama başlarken otomatik güncellenir; migration yoktur. Geliştirme / case ortamı için uygundur; production’da migration kullanılması önerilir.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+---
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+## Zorunlu Özellikler (Case Gereksinimleri)
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+- Ürün listeleme, detay; ADMIN için ürün ekleme, güncelleme, silme.
+- Sepet: ekleme, miktar güncelleme, ürün çıkarma, sepeti getirme (giriş yapmış kullanıcı).
+- Stok kontrolü: sepete eklerken ve sipariş oluştururken yetersiz stokta hata.
+- API dokümantasyonu (Swagger).
+- Validasyon (DTO’lar ve global ValidationPipe).
+- Global exception filter: Hata cevapları tutarlı formatta (statusCode, message, error).
+- Logging interceptor: İstek/cevap loglama.
 
-## Resources
+---
 
-Check out a few resources that may come in handy when working with NestJS:
+## Bonus Özellikler
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- Kimlik Doğrulama && Kullanıcı kayıt ve giriş (JWT).
+- Sipariş: sepettekilerden sipariş oluşturma, sipariş toplam tutar hesaplanması ,kullanıcının kendi siparişlerini listeleme ve detay, sipariş durumu güncelleme.
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Bonus Dışında Eklenen Ekstralar
 
-## Stay in touch
+- **Docker:** Dockerfile (multi-stage) ve docker-compose ile tek komutla uygulama + PostgreSQL çalıştırma.
+- **CORS:** İzin verilen origin’ler `.env`’deki `CORS_ORIGIN` (virgülle ayrılmış) ile yapılandırılır; boş bırakılırsa tüm origin’lere izin verilir.
+- **Helmet:** HTTP güvenlik başlıkları.
+- **Rate limiting (Throttler):** Genel istek limiti (örn. 100/dk); login ve register için daha sıkı limit (örn. 5/dk). 429 Too Many Requests dönülür.
+- **Admin seed:** Uygulama başlarken `.env`’deki `ADMIN_EMAIL` / `ADMIN_PASSWORD` / `ADMIN_NAME` ile tek bir ADMIN kullanıcı oluşturulur veya mevcut kullanıcı ADMIN yapılır.
+- **Unit testler:** Auth, Users, Products, Cart, Orders servisleri için spec dosyaları.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
-## License
+## API Endpoint’leri
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Tüm route’lar `/api` prefix’i altındadır. Bearer token gerektiren endpoint’lerde `Authorization: Bearer <token>` gönderilmelidir.
+
+| Method       | Endpoint                  | Auth       | Açıklama                                              |
+| ------------ | ------------------------- | ---------- | ----------------------------------------------------- |
+| GET          | `/api`                    | —          | Uygulama bilgisi                                      |
+| **Auth**     |                           |            |                                                       |
+| POST         | `/api/auth/register`      | —          | Kayıt (email, password, name)                         |
+| POST         | `/api/auth/login`         | —          | Giriş (email, password)                               |
+| GET          | `/api/auth/me`            | JWT        | Giriş yapmış kullanıcı bilgisi                        |
+| **Products** |                           |            |                                                       |
+| GET          | `/api/products`           | —          | Ürün listesi                                          |
+| GET          | `/api/products/:id`       | —          | Ürün detayı                                           |
+| POST         | `/api/products`           | JWT, ADMIN | Ürün oluşturma                                        |
+| PATCH        | `/api/products/:id`       | JWT, ADMIN | Ürün güncelleme                                       |
+| DELETE       | `/api/products/:id`       | JWT, ADMIN | Ürün silme                                            |
+| **Cart**     |                           |            |                                                       |
+| GET          | `/api/cart`               | JWT        | Sepeti getir                                          |
+| POST         | `/api/cart/items`         | JWT        | Sepete ürün ekle (productId, quantity)                |
+| PATCH        | `/api/cart/items/:itemId` | JWT        | Sepet kalemi miktar güncelle                          |
+| DELETE       | `/api/cart/items/:itemId` | JWT        | Sepetten kalem kaldır                                 |
+| **Orders**   |                           |            |                                                       |
+| POST         | `/api/orders`             | JWT        | Sepetten sipariş oluştur                              |
+| GET          | `/api/orders`             | JWT        | Kullanıcının sipariş listesi                          |
+| GET          | `/api/orders/:id`         | JWT        | Sipariş detayı                                        |
+| PATCH        | `/api/orders/:id/status`  | JWT        | Sipariş durumu güncelle (body: `{ "status": "..." }`) |
+
+Swagger’da tüm DTO’lar ve response örnekleri mevcuttur: `http://localhost:3000/api-docs`.
